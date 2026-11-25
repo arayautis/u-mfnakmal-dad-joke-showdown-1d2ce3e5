@@ -17,12 +17,30 @@ read, the punchline arrives at the very end, and it reads naturally aloud.
 
 import os
 
+OUTPUT_PATH = "/output/entry.txt"
+
 JOKE = "I always carry a pencil in my pocket. You never know when you'll need to draw the line."
+
+MAX_JOKE_CHARS = 200
+
+
+def validate_joke(joke: str) -> None:
+    """Enforce the competition's entry rules: 1-200 chars, one line, UTF-8."""
+    if not joke:
+        raise ValueError("joke must not be empty")
+    if len(joke) > MAX_JOKE_CHARS:
+        raise ValueError(
+            f"joke is {len(joke)} characters, over the {MAX_JOKE_CHARS}-character limit"
+        )
+    if "\n" in joke or "\r" in joke:
+        raise ValueError("joke must be a single line (no newline characters)")
+    joke.encode("utf-8")  # raises UnicodeEncodeError if not encodable
 
 
 def main() -> None:
-    os.makedirs("/output", exist_ok=True)
-    with open("/output/entry.txt", "w", encoding="utf-8") as f:
+    validate_joke(JOKE)
+    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
+    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
         f.write(JOKE)
 
 
